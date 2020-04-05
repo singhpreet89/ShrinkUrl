@@ -1,8 +1,8 @@
-const ShrinkUrl = require('../models/ShrinkUrl'); 
+const ShrinkUrl = require('../models/ShrinkUrl.model'); 
 
-/***************************************** (GET) all url's *****************************************/
+/***************************************** (GET) all Url's *****************************************/
 /* Promise */
-exports.get_all_urls = (req, res) => {
+exports.get_all_urls = (req, res, next) => {
     ShrinkUrl.find()
         .then((urls) => {
             res.status(200).json(urls);
@@ -13,7 +13,7 @@ exports.get_all_urls = (req, res) => {
 }
 
 /* ASYNC / AWAIT */
-// exports.get_all_urls =  async (req, res) => {
+// exports.get_all_urls =  async (req, res, next) => {
 //     try {
 //         const urls = await ShrinkUrl.find()
 //         res.status(200).json(urls);
@@ -22,9 +22,9 @@ exports.get_all_urls = (req, res) => {
 //     }
 // }
 
-/***************************************** (GET) one url *****************************************/
+/***************************************** (GET) a Url by using "Shrinked url" *****************************************/
 /* Promise */
-exports.get_single_url = (req, res) => {
+exports.get_single_url = (req, res, next) => {
     ShrinkUrl.findOne({ short_url : req.params.shortUrl })
         .then((data) => {
             if(data === null) {
@@ -41,7 +41,7 @@ exports.get_single_url = (req, res) => {
 }
 
 /* ASYNC / AWAIT */
-// exports.get_single_url = async (req, res) => {
+// exports.get_single_url = async (req, res, next) => {
 //     try {
 //         const data = await ShrinkUrl.findOne({ short_url : req.params.shortUrl });
 
@@ -57,9 +57,9 @@ exports.get_single_url = (req, res) => {
 //     } 
 // }
 
-/***************************************** (POST) a URL *****************************************/
+/***************************************** (POST) a Url *****************************************/
 /* Promise */
-// exports.post_url = (req, res) => {
+// exports.post_url = (req, res, next) => {
 //     // Checking whether the same URL already exists in the database
 //     ShrinkUrl.findOne({ url : req.body.fullUrl })
 //         .then((data) => {
@@ -92,7 +92,7 @@ exports.get_single_url = (req, res) => {
 // }
 
 /* ASYNC / AWAIT */
-exports.post_url = async (req, res) => {
+exports.post_url = async (req, res, next) => {
     // Checking whether the same URL already exists in the database
     try {
         const data = await ShrinkUrl.findOne({ url : req.body.fullUrl });
@@ -123,9 +123,9 @@ exports.post_url = async (req, res) => {
     } 
 }
 
-/***************************************** (PATCH) a url *****************************************/
+/***************************************** (PATCH) a Url by using id *****************************************/
 /* Promise */
-exports.update_url = (req, res) => {
+exports.update_url = (req, res, next) => {
     ShrinkUrl.updateOne({_id : req.params.urlId}, {$set : {url : req.body.fullUrl}})
         .then((data) => {
             res.status(200).json(data);
@@ -136,7 +136,7 @@ exports.update_url = (req, res) => {
 }
 
 /* ASYNC / AWAIT */
-// exports.update_url =  async (req, res) => {
+// exports.update_url =  async (req, res, next) => {
 //     try {
 //         const data = await ShrinkUrl.updateOne({_id : req.params.urlId}, {$set : {url : req.body.fullUrl}});
 //         res.status(200).json(data);
@@ -145,9 +145,9 @@ exports.update_url = (req, res) => {
 //     } 
 // }
 
-/***************************************** (DELETE) a url *****************************************/
+/***************************************** (DELETE) a Url by using id *****************************************/
 /* Promise */
-// exports.delete_url = (req, res) => {
+// exports.delete_url = (req, res, next) => {
 //     ShrinkUrl.deleteOne({_id : req.params.urlId})
 //         .then((data) => {
 //             res.status(200).json(data);
@@ -158,7 +158,7 @@ exports.update_url = (req, res) => {
 // }
 
 /* ASYNC / AWAIT */
-exports.delete_url = async (req, res) => {
+exports.delete_url = async (req, res, next) => {
     try {
         const data = await ShrinkUrl.deleteOne({_id : req.params.urlId})
         res.status(200).json(data);
