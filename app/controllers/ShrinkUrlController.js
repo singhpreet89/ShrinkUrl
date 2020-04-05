@@ -1,6 +1,6 @@
 const ShrinkUrl = require('../models/ShrinkUrl'); 
 
-/********************* GET ALL URLs *********************/
+/***************************************** (GET) all url's *****************************************/
 /* Promise */
 exports.get_all_urls = (req, res) => {
     ShrinkUrl.find()
@@ -22,7 +22,7 @@ exports.get_all_urls = (req, res) => {
 //     }
 // }
 
-/********************* GET SINGLE URL *********************/
+/***************************************** (GET) one url *****************************************/
 /* Promise */
 exports.get_single_url = (req, res) => {
     ShrinkUrl.findOne({ short_url : req.params.shortUrl })
@@ -57,7 +57,7 @@ exports.get_single_url = (req, res) => {
 //     } 
 // }
 
-/********************* CREATE A URL *********************/
+/***************************************** (POST) a URL *****************************************/
 /* Promise */
 // exports.post_url = (req, res) => {
 //     // Checking whether the same URL already exists in the database
@@ -123,10 +123,10 @@ exports.post_url = async (req, res) => {
     } 
 }
 
-/********************* UPDATE A URL *********************/
+/***************************************** (PATCH) a url *****************************************/
 /* Promise */
 exports.update_url = (req, res) => {
-    ShrinkUrl.updateOne({_id : req.body.urlId}, {$set : {url : req.body.fullUrl}})
+    ShrinkUrl.updateOne({_id : req.params.urlId}, {$set : {url : req.body.fullUrl}})
         .then((data) => {
             res.status(200).json(data);
         }).catch((err) => {
@@ -138,17 +138,17 @@ exports.update_url = (req, res) => {
 /* ASYNC / AWAIT */
 // exports.update_url =  async (req, res) => {
 //     try {
-//         const data = await ShrinkUrl.updateOne({_id : req.body.urlId}, {$set : {url : req.body.fullUrl}});
+//         const data = await ShrinkUrl.updateOne({_id : req.params.urlId}, {$set : {url : req.body.fullUrl}});
 //         res.status(200).json(data);
 //     } catch(error) {
 //         res.json({error : "Not found"});
 //     } 
 // }
 
-/********************* DELETE A URL *********************/
+/***************************************** (DELETE) a url *****************************************/
 /* Promise */
 // exports.delete_url = (req, res) => {
-//     ShrinkUrl.deleteOne({_id : req.body.urlId})
+//     ShrinkUrl.deleteOne({_id : req.params.urlId})
 //         .then((data) => {
 //             res.status(200).json(data);
 //         }).catch((err) => {
@@ -160,7 +160,7 @@ exports.update_url = (req, res) => {
 /* ASYNC / AWAIT */
 exports.delete_url = async (req, res) => {
     try {
-        const data = await ShrinkUrl.deleteOne({_id : req.body.urlId})
+        const data = await ShrinkUrl.deleteOne({_id : req.params.urlId})
         res.status(200).json(data);
     } catch(error) {
         res.json({error : "Not found"});
