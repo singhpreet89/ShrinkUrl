@@ -3,11 +3,17 @@ const ShrinkUrl = require('../models/ShrinkUrl.model');
 /***************************************** (GET) all Url's *****************************************/
 /* Promise */
 exports.get_all_urls = (req, res, next) => {
-    ShrinkUrl.find()
-        .then((urls) => {
-            res.status(200).json(urls);
-        }).catch((err) => {
-            res.status(404).json({error : "Access Error"})
+    ShrinkUrl.find({}, '-__v')    
+    // OR
+    // ShrinkUrl.find({}, '__id clicks url short_url date')
+        .then((data) => {
+            res.status(200).json(
+                { data : 
+                    { urls : data }
+                }
+            );
+        }).catch((error) => {
+            next(new Error());
         })
     ;
 }
@@ -15,10 +21,16 @@ exports.get_all_urls = (req, res, next) => {
 /* ASYNC / AWAIT */
 // exports.get_all_urls =  async (req, res, next) => {
 //     try {
-//         const urls = await ShrinkUrl.find()
-//         res.status(200).json(urls);
-//     } catch(err) {
-//         res.status(404).json({error : "Access Error"});
+//         const urls = await ShrinkUrl.find({}, {__v : 0});
+//         // OR
+//         // ShrinkUrl.find({}, '__id clicks url short_url date')
+//         res.status(200).json(
+//             { data : 
+//                 { urls : urls }
+//             }
+//         );
+//     } catch(error) {
+//         next(new Error());
 //     }
 // }
 
@@ -28,14 +40,20 @@ exports.get_single_url = (req, res, next) => {
     ShrinkUrl.findOne({ short_url : req.params.shortUrl })
         .then((data) => {
             if(data === null) {
-                res.status(404);
+                throw 0;
             }
             data.clicks++;
             data.save();
     
-            res.status(200).json(data.url);
-        }).catch((err) => {
-            res.status(404).json({error : "Not Found"});
+            res.status(200).json(
+                { data : 
+                    { url : data.url }
+                }
+            );
+        }).catch((error) => {
+            const err = new Error("Short Url not found");
+            err.status = 404;
+            next(err);
         })
     ;
 }
@@ -46,14 +64,20 @@ exports.get_single_url = (req, res, next) => {
 //         const data = await ShrinkUrl.findOne({ short_url : req.params.shortUrl });
 
 //         if(data === null) {
-//             res.status(404);
+//             throw 0;
 //         }
 //         data.clicks++;
 //         data.save();
 
-//         res.status(200).json(data.url);
-//     } catch(e) {
-//         res.status(404).json({error : "Not Found"});
+//         res.status(200).json(
+//             { data : 
+//                 { url : data.url }
+//             }
+//         );
+//     } catch(error) {
+//         const err = new Error("Short Url not found");
+//         err.status = 404;
+//         next(err);
 //     } 
 // }
 
@@ -63,14 +87,9 @@ exports.get_single_url = (req, res, next) => {
 //     // Checking whether the same URL already exists in the database
 //     ShrinkUrl.findOne({ url : req.body.fullUrl })
 //         .then((data) => {
-//             if(data === null) {
-//                 res.status(404);
-//             }
-
-//             res.status(409).json({ 
-//                 "error" : "Short Url entry already exist for " + req.body.fullUrl,
-//                 "short_url" : data.short_url 
-//             });
+//             const err = new Error(req.body.fullUrl + " already exist as: " + data.short_url);
+//             err.status = 409;
+//             next(err);
 //         }).catch((err) => {
 //         // If it does not exist then Shrink it and SAVE
 //             const url = new ShrinkUrl({
@@ -80,11 +99,14 @@ exports.get_single_url = (req, res, next) => {
 //             url.save()
 //                 .then((savedUrl) => {
 //                     if(savedUrl) {
-//                         res.status(201).json(savedUrl);
+//                         res.status(201).json({ data: savedUrl });
 //                     } 
 //                 })
-//                 .catch((err) => {
-//                     res.status(403).json({error : "Forbidden"});
+//                 .catch((error) => {
+//                     // Triggered when the ContentType of req.body.fullUrl is NOT SUPPORTED or req.body.fullUrl is EMPTY
+//                     const err = new Error("Url can not be empty");
+//                     err.status = 400;
+//                     next(err);
 //                 })
 //             ;
 //         })
@@ -96,15 +118,16 @@ exports.post_url = async (req, res, next) => {
     // Checking whether the same URL already exists in the database
     try {
         const data = await ShrinkUrl.findOne({ url : req.body.fullUrl });
+        // console.log("DATA:" , data);
+        // if(data === null) {
+        //     const err = new Error("Bad request");
+        //     err.status = 400;
+        //     next(err);
+        // }
 
-        if(data === null) {
-            res.status(404);
-        }
-
-        res.status(409).json({ 
-            "error" : "Short Url entry already exist for " + req.body.fullUrl,
-            "short_url" : data.short_url 
-        });
+        const err = new Error(req.body.fullUrl + " already exist as: " + data.short_url);
+        err.status = 409;
+        next(err);
     } catch(e) {
         // If it does not exist then Shrink it and SAVE
         const url = new ShrinkUrl({
@@ -115,10 +138,13 @@ exports.post_url = async (req, res, next) => {
             const savedUrl = await url.save();
         
             if(savedUrl) {
-                res.status(201).json(savedUrl);
+                res.status(201).json({ data: savedUrl });
             }
-        } catch (err) {
-            res.status(403).json({error : "Forbidden"});
+        } catch (error) {
+            // Triggered when the ContentType of req.body.fullUrl is NOT SUPPORTED or req.body.fullUrl is EMPTY
+            const err = new Error("Url can not be empty");
+            err.status = 400;
+            next(err);
         }
     } 
 }
@@ -128,9 +154,21 @@ exports.post_url = async (req, res, next) => {
 exports.update_url = (req, res, next) => {
     ShrinkUrl.updateOne({_id : req.params.urlId}, {$set : {url : req.body.fullUrl}})
         .then((data) => {
-            res.status(200).json(data);
-        }).catch((err) => {
-            res.json({error : "Not found"});
+            if((data.nModified === 1 && data.n === 1) || (data.nModified === 0 && data.n === 1)) {
+                res.status(200).json({ data:
+                    { 
+                        status : "success",
+                        code : 200,
+                        message : "Url updated"
+                    }
+                });  
+            } else {
+                throw 0;    // Throwing custom exception to call the catch block
+            }
+        }).catch((error) => {
+            const err = new Error("Id not found");
+            err.status = 404;
+            next(err);
         })
     ;
 }
@@ -139,30 +177,67 @@ exports.update_url = (req, res, next) => {
 // exports.update_url =  async (req, res, next) => {
 //     try {
 //         const data = await ShrinkUrl.updateOne({_id : req.params.urlId}, {$set : {url : req.body.fullUrl}});
-//         res.status(200).json(data);
+//         if((data.nModified === 1 && data.n === 1) || (data.nModified === 0 && data.n === 1)) {
+//             res.status(200).json({ data:
+//                 { 
+//                     status : "success",
+//                     code : 200,
+//                     message : "Url updated"
+//                 }
+//             }); 
+//         } else {
+//             throw 0;    // Throwing custom exception to call the catch block
+//         }
 //     } catch(error) {
-//         res.json({error : "Not found"});
+//         const err = new Error("Id not found");
+//         err.status = 404;
+//         next(err);
 //     } 
 // }
 
 /***************************************** (DELETE) a Url by using id *****************************************/
 /* Promise */
-// exports.delete_url = (req, res, next) => {
-//     ShrinkUrl.deleteOne({_id : req.params.urlId})
-//         .then((data) => {
-//             res.status(200).json(data);
-//         }).catch((err) => {
-//             res.json({error : "Not found"});
-//         })
-//     ;
-// }
+exports.delete_url = (req, res, next) => {
+    ShrinkUrl.deleteOne({_id : req.params.urlId})
+        .then((data) => {
+            if(data.deletedCount === 1 && data.n === 1) {
+                res.status(200).json({ data:
+                    { 
+                        status : "success",
+                        code : 200,
+                        message : "Url deleted"
+                    }
+                }); 
+            } else {
+                throw 0;
+            }
+        }).catch((error) => {
+            const err = new Error("Id not found");
+            err.status = 404;
+            next(err);
+        })
+    ;
+}
 
 /* ASYNC / AWAIT */
-exports.delete_url = async (req, res, next) => {
-    try {
-        const data = await ShrinkUrl.deleteOne({_id : req.params.urlId})
-        res.status(200).json(data);
-    } catch(error) {
-        res.json({error : "Not found"});
-    } 
-}
+// exports.delete_url = async (req, res, next) => {
+//     try {
+//         const data = await ShrinkUrl.deleteOne({_id : req.params.urlId});
+//         if(data.deletedCount === 1 && data.n === 1) {
+//             res.status(200).json({ data:
+//                 { 
+//                     status : "success",
+//                     code : 200,
+//                     message : "Url deleted"
+//                 }
+//             }); 
+//         } else {
+//             throw 0;    // Throwing custom exception to call the catch block
+//         }
+        
+//     } catch(error) {
+//         const err = new Error("Id not found");
+//         err.status = 404;
+//         next(err);
+//     } 
+// }

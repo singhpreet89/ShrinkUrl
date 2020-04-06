@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
 const shortId = require('shortid');
 
-
-
-const shortUrlSchema = mongoose.Schema({
+const shrinkUrlSchema = new Schema({
     url : {
         type : String,
         required : true
@@ -24,4 +24,5 @@ const shortUrlSchema = mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('ShortUrl', shortUrlSchema);
+const ShrinkUrl = mongoose.model('shrink_url', shrinkUrlSchema)
+module.exports = ShrinkUrl;
