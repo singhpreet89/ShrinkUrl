@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const morgan  = require('morgan');
+const createError = require('http-errors');
 
 const dotenv = require('dotenv').config();
 console.log("ENVIRONMENT VARIABLES: " , dotenv.parsed);
@@ -23,15 +24,15 @@ app.use('/api/urls', ShrinkUrlRoutes);
 
 // Handle all the non existant paths
 app.use((req, res, next) => {
-    const err = new Error("Page not found");
-    err.status = 404;
-    next(err);
+    // const err = new Error("Not found");
+    // err.status = 404;
+    // next(err);
+    next(createError(404, "Not found"));
 });
 
 // Handle Generic Errors
 app.use((err, req, res, next) => {
-    res.status(err.status);
-    res.json({ 
+    res.status(err.status || 500).json({ 
         status : "error",
         code : err.status || 500,
         message : err.message || "Internal Server error",
