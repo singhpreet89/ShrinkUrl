@@ -19,7 +19,8 @@ module.exports = () => {
             user: process.env.DB_USERNAME || "",
             pass: process.env.DB_PASSWORD || "",
             useNewUrlParser: true, 
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            useFindAndModify: false
         }
         ).then(() => {
             console.log('MongoDB Database: "' + process.env.DB_NAME + '" @:' + process.env.DB_CONNECTION + "://" + process.env.DB_HOST + ":" + process.env.DB_PORT);

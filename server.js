@@ -31,12 +31,10 @@ app.use((req, res, next) => {
 // Handle Generic Errors
 app.use((err, req, res, next) => {
     res.status(err.status);
-    res.json({ data:
-        { 
-            status : "error",
-            code : err.status || 500,
-            message : err.message || "Internal Server error",
-        }
+    res.json({ 
+        status : "error",
+        code : err.status || 500,
+        message : err.message || "Internal Server error",
     });
 });
 
