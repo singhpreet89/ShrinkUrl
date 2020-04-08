@@ -18,11 +18,24 @@ const shrinkUrlSchema = new Schema({
         required : true,
         default : 0
     },
-    date : {
+    created_at : {
         type : Date,
-        default : Date.now
+        default : Date.now,
     },
-});
+    clicked_at : {
+        type : Date,
+    },
+},
+
+/* In case only time stamps are required */
+// { 
+//     timestamps: 
+//     { 
+//         createdAt: 'created_at', 
+//         updatedAt: 'updated_at' 
+//     }
+// }
+);
 
 const ShrinkUrl = mongoose.model('shrink_url', shrinkUrlSchema)
 module.exports = ShrinkUrl;

@@ -38,6 +38,7 @@ module.exports = {
                     throw createError(404, "Short Url does not exist");
                 }
                 returnedUrl.clicks++;
+                returnedUrl.clicked_at = new Date(Date.now());
                 returnedUrl.save();
         
                 res.status(200).json({ url : returnedUrl });
@@ -56,6 +57,7 @@ module.exports = {
     //             throw createError(404, "Short Url does not exist");
     //         }
     //         returnedUrl.clicks++;
+    //         returnedUrl.clicked_at = new Date(Date.now());
     //         returnedUrl.save();
 
     //         res.status(200).json({ url : returnedUrl });
@@ -93,7 +95,6 @@ module.exports = {
                 } else {
                     throw createError(409, req.body.fullUrl + " already exist as Short Url: " + checkedUrl.short_url);
                 }
-                
             }).catch((error) => {
                 next(error);
             })
@@ -243,7 +244,7 @@ module.exports = {
 /***************************************** (DELETE / REMOVE) the Collection *****************************************/
     /* Promise */
     delete_collection : (req, res, next) => {
-    ShrinkUrl.remove()
+    ShrinkUrl.deleteMany()
             .then((result) => {
                 if(result.n === result.deletedCount) {
                     res.status(200).json(
@@ -267,7 +268,7 @@ module.exports = {
     /* ASYNC / AWAIT */
     // delete_collection : async (req, res, next) => {
     //     try {
-    //         const result = await ShrinkUrl.remove();
+    //         const result = await ShrinkUrl.deleteMany();
 
     //         if(result.n === result.deletedCount) {
     //             res.status(200).json(
