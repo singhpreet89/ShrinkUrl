@@ -112,6 +112,7 @@ module.exports = {
     //             // If the fullUrl not exist then Shrink it and SAVE
     //             const url = new ShrinkUrl({
     //                 url : req.body.fullUrl,
+    //                 short_url : process.env.APP_SHORT_URL_PREFIX + shortId.generate(),
     //             });
             
     //             try {
