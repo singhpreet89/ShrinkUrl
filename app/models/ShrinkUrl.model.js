@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const shortId = require('shortid');
-
 const shrinkUrlSchema = new Schema({
     url : {
         type : String,
@@ -11,19 +9,18 @@ const shrinkUrlSchema = new Schema({
     short_url : {
         type : String,
         required : true,
-        default :  shortId.generate
     },
     clicks : {
         type : String,
         required : true,
         default : 0
     },
+    clicked_at : {
+        type : Date,
+    },
     created_at : {
         type : Date,
         default : Date.now,
-    },
-    clicked_at : {
-        type : Date,
     },
 },
 

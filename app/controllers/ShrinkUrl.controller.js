@@ -1,5 +1,7 @@
 const createError = require('http-errors');
 const mongoose = require('mongoose');
+const shortId = require('shortid');
+
 const ShrinkUrl = require('../models/ShrinkUrl.model'); 
 
 module.exports = {
@@ -75,8 +77,8 @@ module.exports = {
                 if(checkedUrl === null) {
                     const url = new ShrinkUrl({
                         url : req.body.fullUrl,
+                        short_url : process.env.APP_SHORT_URL_PREFIX + shortId.generate(),
                     });
-                
                     url.save()
                         .then((savedUrl) => {
                             if(savedUrl) {
