@@ -239,4 +239,52 @@ module.exports = {
     //         next(error);
     //     } 
     // },
+
+/***************************************** (DELETE / REMOVE) the Collection *****************************************/
+    /* Promise */
+    delete_collection : (req, res, next) => {
+    ShrinkUrl.remove()
+            .then((result) => {
+                if(result.n === result.deletedCount) {
+                    res.status(200).json(
+                        { 
+                            status : "success",
+                            code : 200,
+                            message : "Collection deleted",
+                        }
+                    );
+                } else if(result.n !== result.deletedCount) {
+                    throw createError(404, "Can not delete all the URLs");
+                } else {
+                    throw createError();
+                }
+            }).catch((error) => {
+                next(error);
+            })
+        ;
+    },
+
+    /* ASYNC / AWAIT */
+    // delete_collection : async (req, res, next) => {
+    //     try {
+    //         const result = await ShrinkUrl.remove();
+
+    //         if(result.n === result.deletedCount) {
+    //             res.status(200).json(
+    //                 { 
+    //                     status : "success",
+    //                     code : 200,
+    //                     message : "Collection deleted",
+    //                 }
+    //             );
+    //         } else if(result.n !== result.deletedCount) {
+    //             throw createError(404, "Can not delete all the URLs");
+    //         } else {
+    //             throw createError();
+    //         }
+            
+    //     } catch(error) {
+    //         next(error);
+    //     } 
+    // },
 }

@@ -5,7 +5,7 @@ const morgan  = require('morgan');
 const createError = require('http-errors');
 
 const dotenv = require('dotenv').config();
-console.log("ENVIRONMENT VARIABLES: " , dotenv.parsed);
+// console.log("ENVIRONMENT VARIABLES: " , dotenv.parsed);
 
 const ShrinkUrlRoutes = require('./app/routes/ShrinkUrl.route');
 
@@ -24,9 +24,6 @@ app.use('/api/urls', ShrinkUrlRoutes);
 
 // Handle all the non existant paths
 app.use((req, res, next) => {
-    // const err = new Error("Not found");
-    // err.status = 404;
-    // next(err);
     next(createError(404, "Not found"));
 });
 
