@@ -38,7 +38,6 @@ app.use((err, req, res, next) => {
 
 /* EXPRESS SERVER *****************************************************************************/
 const PORT = process.env.EX_PORT || 3000;
-app.listen( 
-    PORT, () => {
+app.listen(PORT, () => {  
     console.log('Listening requests on Port: ' + PORT);
 });
