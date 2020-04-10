@@ -6,7 +6,7 @@ const VerifyUrl = require('../middlewares/requests/VerifyUrl.middleware');
 router.get("/", ShrinkUrlController.get_all_urls);
 router.get('/:shortUrl', ShrinkUrlController.get_single_url);
 
-router.post("/",  VerifyUrl, ShrinkUrlController.post_url);
+router.post("/", VerifyUrl, ShrinkUrlController.post_url);
 
 router.patch('/update/:urlId', VerifyUrl, ShrinkUrlController.update_url);
 
