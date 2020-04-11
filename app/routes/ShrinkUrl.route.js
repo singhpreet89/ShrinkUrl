@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const ShrinkUrlController = require('../controllers/ShrinkUrl.controller');
-const VerifyUrl = require('../middlewares/requests/VerifyUrl.middleware');
+const ValidateVerifyUrl = require('../middlewares/requests/ValidateVerifyUrl.middleware');
 
-router.get("/", ShrinkUrlController.get_all_urls);
-router.get('/:shortUrl', ShrinkUrlController.get_single_url);
+router.get("/", ShrinkUrlController.getAllUrls);
+router.get('/:urlId', ShrinkUrlController.getSingleUrl);
 
-router.post("/", VerifyUrl, ShrinkUrlController.post_url);
+router.post("/", ValidateVerifyUrl, ShrinkUrlController.postUrl);
 
-router.patch('/update/:urlId', VerifyUrl, ShrinkUrlController.update_url);
+router.patch('/update/:urlId', ValidateVerifyUrl, ShrinkUrlController.updateUrl);
 
-router.delete('/delete/:urlId', ShrinkUrlController.delete_url);
-router.delete('/delete', ShrinkUrlController.delete_collection);
+router.delete('/delete/:urlId', ShrinkUrlController.deleteUrl);
+router.delete('/delete', ShrinkUrlController.deleteCollection);
 
 module.exports = router;

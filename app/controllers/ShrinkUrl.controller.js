@@ -7,7 +7,7 @@ const ShrinkUrl = require('../models/ShrinkUrl.model');
 module.exports = {
 /***************************************** (GET) all Url's *****************************************/
     /* Promise */
-    get_all_urls : (req, res, next) => {
+    getAllUrls : (req, res, next) => {
         ShrinkUrl.find({}, '-__v')    
         // OR
         // ShrinkUrl.find({}, '__id clicks url short_url date')
@@ -20,7 +20,7 @@ module.exports = {
     },
 
     /* ASYNC / AWAIT */
-    // get_all_urls : async (req, res, next) => {
+    // getAllUrls : async (req, res, next) => {
     //     try {
     //         const urls = await ShrinkUrl.find({}, { __v : 0 });
     //         // OR
@@ -33,11 +33,11 @@ module.exports = {
 
 /***************************************** (GET) a Url by using "Shrinked url" *****************************************/
     /* Promise */
-    get_single_url : (req, res, next) => {
-        ShrinkUrl.findOne({ short_url : req.params.shortUrl }, { __v : 0 })
+    getSingleUrl : (req, res, next) => {
+        ShrinkUrl.findOne({ _id : req.params.urlId }, { __v : 0 })
             .then((returnedUrl) => {
                 if(returnedUrl === null) {
-                    throw createError(404, "Short Url does not exist");
+                    throw createError(404, "Url does not exist");
                 }
                 returnedUrl.clicks++;
                 returnedUrl.clicked_at = new Date(Date.now());
@@ -45,18 +45,22 @@ module.exports = {
         
                 res.status(200).json({ url : returnedUrl });
             }).catch((error) => {
+                if(error instanceof mongoose.CastError) {
+                    next(createError(400, "Invalid Url id"));
+                    return;
+                }
                 next(error);
             })
         ;
     },
 
     /* ASYNC / AWAIT */
-    // get_single_url : async (req, res, next) => {
+    // getSingleUrl : async (req, res, next) => {
     //     try {
-    //         const returnedUrl = await ShrinkUrl.findOne({ short_url : req.params.shortUrl }, { __v : 0 });
+    //         const returnedUrl = await ShrinkUrl.findOne({ _id : req.params.urlId }, { __v : 0 });
 
     //         if(returnedUrl === null) {
-    //             throw createError(404, "Short Url does not exist");
+    //             throw createError(404, "Url does not exist");
     //         }
     //         returnedUrl.clicks++;
     //         returnedUrl.clicked_at = new Date(Date.now());
@@ -64,13 +68,17 @@ module.exports = {
 
     //         res.status(200).json({ url : returnedUrl });
     //     } catch(error) {
+    //         if(error instanceof mongoose.CastError) {
+    //             next(createError(400, "Invalid Url id"));
+    //             return;
+    //         }
     //         next(error);
     //     } 
     // },
 
 /***************************************** (POST) a Url *****************************************/
     /* Promise */
-    post_url : (req, res, next) => {
+    postUrl : (req, res, next) => {
         // Checking whether the same URL already exists in the database
         ShrinkUrl.findOne({ url : req.body.fullUrl })
             .then((checkedUrl) => {
@@ -104,7 +112,7 @@ module.exports = {
     },
 
     /* ASYNC / AWAIT */
-    // post_url : async (req, res, next) => {
+    // postUrl : async (req, res, next) => {
     //     // Checking whether the same URL already exists in the database
     //     try {
     //         const checkedUrl = await ShrinkUrl.findOne({ url : req.body.fullUrl });
@@ -138,7 +146,7 @@ module.exports = {
 
 /***************************************** (PATCH) a Url by using id *****************************************/
     /* Promise */
-    update_url : (req, res, next) => {
+    updateUrl : (req, res, next) => {
         const id = req.params.urlId;
         const updates = { url : req.body.fullUrl };
         const options = { new : true };
@@ -166,7 +174,7 @@ module.exports = {
     },
 
     /* ASYNC / AWAIT */
-    // update_url : async (req, res, next) => {
+    // updateUrl : async (req, res, next) => {
     //     try {
     //         const id = req.params.urlId;
     //         const updates = { url : req.body.fullUrl };
@@ -194,7 +202,7 @@ module.exports = {
 
 /***************************************** (DELETE) a Url by using id *****************************************/
     /* Promise */
-    delete_url : (req, res, next) => {
+    deleteUrl : (req, res, next) => {
         ShrinkUrl.findByIdAndDelete(req.params.urlId)
             .then((result) => {
                 if(result === null) {
@@ -220,7 +228,7 @@ module.exports = {
     },
 
     /* ASYNC / AWAIT */
-    // delete_url : async (req, res, next) => {
+    // deleteUrl : async (req, res, next) => {
     //     try {
     //         const result = await ShrinkUrl.findByIdAndDelete(req.params.urlId);
             
@@ -246,7 +254,7 @@ module.exports = {
 
 /***************************************** (DELETE / REMOVE) the Collection *****************************************/
     /* Promise */
-    delete_collection : (req, res, next) => {
+    deleteCollection : (req, res, next) => {
     ShrinkUrl.deleteMany()
             .then((result) => {
                 if(result.n === result.deletedCount) {
@@ -269,7 +277,7 @@ module.exports = {
     },
 
     /* ASYNC / AWAIT */
-    // delete_collection : async (req, res, next) => {
+    // deleteCollection : async (req, res, next) => {
     //     try {
     //         const result = await ShrinkUrl.deleteMany();
 

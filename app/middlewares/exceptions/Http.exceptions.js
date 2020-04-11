@@ -1,10 +1,8 @@
-const express = require('express');
-const app = express();
 const createError = require('http-errors');
 
 // Handle all the non existant paths
 exports.nonExistantPathsHandler = () => {
-    return createError(404, "Path Not found");
+    return createError(404, "Not found");
 }
 
 // Handle Generic Errors

@@ -1,8 +1,10 @@
 const express = require('express');
+const helmet = require('helmet');
 const app = express();
 const cors = require('cors');
 const morgan  = require('morgan');
-const createError = require('http-errors');
+
+app.use(helmet());
 
 const dotenv = require('dotenv').config();
 // console.log("ENVIRONMENT VARIABLES: " , dotenv.parsed);
@@ -30,6 +32,8 @@ app.use((req, res, next) =>{
 app.use((err, req, res, next) => {
     HttpExceptions.genericExceptionHandler(err, res);
 });
+
+app.set('json spaces', 2);
 
 const PORT = process.env.EX_PORT || 3000;
 app.listen(PORT, () => {  

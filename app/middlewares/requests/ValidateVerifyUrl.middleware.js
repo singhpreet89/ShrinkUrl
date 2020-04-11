@@ -2,16 +2,17 @@ const urlExist = require('url-exist');
 const createError = require('http-errors');
 const urlParser = require('url');
 
+/* THIS MODULE VERIFIES if an actual url is passed and thenVALIDATES WHETHER THE Url(WEBSITE) IS ONLINE */
 /* Promise */
-const verifyUrl = (req, res, next) => {
+const validateVerifyUrl = (req, res, next) => {
     const verifiedFullUrl = verifyHttpProtocol(req.body.fullUrl);
-
+    
     urlExist(verifiedFullUrl)
         .then((exists) => {
             if(exists) {
                 next();
             } else {
-                throw createError(421, req.body.fullUrl + " is an Invalid Url");
+                throw createError(400, "Bad request");
             }
         })
         .catch((error) => {
@@ -30,7 +31,7 @@ const verifyUrl = (req, res, next) => {
 //         if(exists) {
 //             next();
 //         } else {
-//             throw createError(421, req.body.fullUrl + " is an Invalid Url");
+//             throw createError(400, "Bad request");
 //         }
 //     } catch(error) {
 //         next(error);
@@ -51,4 +52,4 @@ const verifyHttpProtocol = (url) => {
     return verifiedUrl.protocol + "//" + verifiedUrl.host;
 }
 
-module.exports = verifyUrl;
+module.exports = validateVerifyUrl;
