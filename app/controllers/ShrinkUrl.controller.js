@@ -3,16 +3,21 @@ const mongoose = require('mongoose');
 const shortId = require('shortid');
 
 const ShrinkUrl = require('../models/ShrinkUrl.model'); 
+const { handleFilters, handleProjections, handleOptions } = require('./helpers/ShrinkUrl.helper');
 
 module.exports = {
 /***************************************** (GET) all Url's *****************************************/
     /* Promise */
     getAllUrls : (req, res, next) => {
-        ShrinkUrl.find({}, '-__v')    
+        const filters = handleFilters(req);
+        const projections = handleProjections(req);
+        const options = handleOptions(req);
+       
+        ShrinkUrl.find(filters, projections, options)
         // OR
-        // ShrinkUrl.find({}, '__id clicks url short_url date')
-            .then((data) => {
-                res.status(200).json({ urls : data });
+        // ShrinkUrl.find({}, '__id clicks url short_url date', options)
+            .then((returnedUrls) => {
+                res.status(200).json({ urls : returnedUrls });
             }).catch((error) => {
                 next(createError());
             })
@@ -22,10 +27,14 @@ module.exports = {
     /* ASYNC / AWAIT */
     // getAllUrls : async (req, res, next) => {
     //     try {
-    //         const urls = await ShrinkUrl.find({}, { __v : 0 });
+    //         const filters = handleFilters(req);
+    //         const projections = handleProjections(req);
+    //         const options = handleOptions(req);
+            
+    //         const returnedUrls = await ShrinkUrl.find(filters, projections, options);
     //         // OR
-    //         // ShrinkUrl.find({}, '__id clicks url short_url date')
-    //         res.status(200).json({ urls : urls });
+    //         // ShrinkUrl.find({}, { __v : 0 }, options)
+    //         res.status(200).json({ urls : returnedUrls });
     //     } catch(error) {
     //         next(createError());
     //     }
