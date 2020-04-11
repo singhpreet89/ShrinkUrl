@@ -151,8 +151,9 @@ module.exports = {
         const updates = { url : req.body.fullUrl };
         const options = { new : true };
 
-        ShrinkUrl.findByIdAndUpdate(id, updates, options)
+        ShrinkUrl.findByIdAndUpdate(id, updates, options).select('-__v')
             .then((result) => {
+                console.log("Result: " , result);
                 if(result === null) {
                     throw createError(404, "Url does not exist");  
                 } else {
@@ -160,7 +161,7 @@ module.exports = {
                         status : "success",
                         code : 200,
                         message : "Url updated",
-                        updated_url : result,
+                        updated_url : result, 
                     });
                 }
             }).catch((error) => {
@@ -180,7 +181,7 @@ module.exports = {
     //         const updates = { url : req.body.fullUrl };
     //         const options = { new : true };
             
-    //         const result = await ShrinkUrl.findByIdAndUpdate(id, updates, options);
+    //         const result = await ShrinkUrl.findByIdAndUpdate(id, updates, options).select('-__v');
     //         if(result === null) {
     //             throw createError(404, "Url does not exist"); 
     //         } else {
@@ -203,7 +204,7 @@ module.exports = {
 /***************************************** (DELETE) a Url by using id *****************************************/
     /* Promise */
     deleteUrl : (req, res, next) => {
-        ShrinkUrl.findByIdAndDelete(req.params.urlId)
+        ShrinkUrl.findByIdAndDelete(req.params.urlId).select('-__v')
             .then((result) => {
                 if(result === null) {
                     throw createError(404, "Url does not exist");
@@ -230,7 +231,7 @@ module.exports = {
     /* ASYNC / AWAIT */
     // deleteUrl : async (req, res, next) => {
     //     try {
-    //         const result = await ShrinkUrl.findByIdAndDelete(req.params.urlId);
+    //         const result = await ShrinkUrl.findByIdAndDelete(req.params.urlId).select('-__v');
             
     //         if(result === null) {
     //             throw createError(404, "Url does not exist"); 
