@@ -3,6 +3,8 @@ const helmet = require('helmet');
 const app = express();
 const cors = require('cors');
 const morgan  = require('morgan');
+var favicon = require('serve-favicon');
+var path = require('path');
 
 app.use(helmet());
 
@@ -19,6 +21,9 @@ app.use(express.urlencoded({extended: true}));  // This makes sure that the inco
 
 app.use(cors());
 app.use(morgan('dev'));
+
+// Handle the random Favicon requests by browsers
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 // Handle ShrinkUrl routes
 app.use('/api/urls', ShrinkUrlRoutes); 
