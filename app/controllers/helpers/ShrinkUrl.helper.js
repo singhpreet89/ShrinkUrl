@@ -7,9 +7,25 @@ module.exports = {
         const filters = {};
         const clicksObject = {};
 
-        // If possible then make it generic by reducing some if else conditions
         if(req.query.filter === "clicks") {
-            if(parseInt(req.query.gte)) {
+            if(parseInt(req.query.gte) && parseInt(req.query.lte)) {
+                clicksObject['$gte'] = parseInt(req.query.gte);
+                clicksObject['$lte'] = parseInt(req.query.lte);
+                filters['clicks'] = clicksObject;
+            } else if(parseInt(req.query.gte) && parseInt(req.query.lt)) {
+                clicksObject['$gte'] = parseInt(req.query.gte);
+                clicksObject['$lt'] = parseInt(req.query.lt);
+                filters['clicks'] = clicksObject;
+            } else if(parseInt(req.query.gt) && parseInt(req.query.lte)) {
+                console.log("3rd");
+                clicksObject['$gt'] = parseInt(req.query.gt);
+                clicksObject['$lte'] = parseInt(req.query.lte);
+                filters['clicks'] = clicksObject;
+            } else if(parseInt(req.query.gt) && parseInt(req.query.lt)) {
+                clicksObject['$gt'] = parseInt(req.query.gt);
+                clicksObject['$lt'] = parseInt(req.query.lt);
+                filters['clicks'] = clicksObject;
+            } else if(parseInt(req.query.gte)) {
                 clicksObject['$gte'] = parseInt(req.query.gte);
                 filters['clicks'] = clicksObject;
             } else if(parseInt(req.query.lte)) {
@@ -27,18 +43,8 @@ module.exports = {
             } else if(parseInt(req.query.eq)) {
                 filters['clicks'] = parseInt(req.query.eq);
             }
-        } 
-        // There could be 8 additional combinations in case the user wants to perform operations like below:
-        // ShrinkUrl.find({clicks : { $gte : 3, $lte : 5 }}, projections, options)
-        // ShrinkUrl.find({clicks : { $gte : 3, $lt : 5 }}, projections, options)
-        // ShrinkUrl.find({clicks : { $gt : 8, lte : 3 }}, projections, options)
-        // ShrinkUrl.find({clicks : { $gt : 8, lt : 3 }}, projections, options)
+        }
 
-        // ShrinkUrl.find({clicks : { $lte : 8, $gte : 3 }}, projections, options)
-        // ShrinkUrl.find({clicks : { $lte : 8, gt : 3 }}, projections, options)
-        // ShrinkUrl.find({clicks : { $lt : 8, gte : 3 }}, projections, options)
-        // ShrinkUrl.find({clicks : { $lt : 8, gt : 3 }}, projections, options)
-        
         return filters;
     },
 
@@ -52,7 +58,6 @@ module.exports = {
             // Returning Projections object 
             return projectionsArray.reduce((a,b) => ({...a, [b] : 0}),{});   
         }
-
         return projections;
     },
 
