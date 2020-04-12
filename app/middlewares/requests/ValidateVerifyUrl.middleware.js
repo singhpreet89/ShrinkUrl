@@ -2,41 +2,33 @@ const urlExist = require('url-exist');
 const createError = require('http-errors');
 const urlParser = require('url');
 
-/* THIS MODULE VERIFIES if an actual url is passed and thenVALIDATES WHETHER THE Url(WEBSITE) IS ONLINE */
+/* THIS MODULE VERIFIES if an actual url is passed and then VALIDATES WHETHER THE Url(WEBSITE) IS ONLINE */
 /* Promise */
 const validateVerifyUrl = (req, res, next) => {
-    const verifiedFullUrl = verifyHttpProtocol(req.body.fullUrl);
-    
-    urlExist(verifiedFullUrl)
-        .then((exists) => {
-            if(exists) {
-                next();
-            } else {
-                throw createError(400, "Bad request");
-            }
-        })
-        .catch((error) => {
-            next(error);
-        })
-    ;
-}
+    const verifiedUrl = verifyHttpProtocol(req.body.fullUrl);
 
-/* ASYNC / AWAIT */
-// const verifyUrl = async (req, res, next) => {
-//     const verifiedFullUrl = verifyHttpProtocol(req.body.fullUrl);
-
-//     try {
-//         const exists = await urlExist(verifiedFullUrl);
+    // Verify the URL when it is a http or https link
+    if(verifiedUrl.protocol === 'http:' || verifiedUrl.protocol === 'https:') {
+        const verifiedFullUrl = verifiedUrl.protocol + "//" + verifiedUrl.host;
         
-//         if(exists) {
-//             next();
-//         } else {
-//             throw createError(400, "Bad request");
-//         }
-//     } catch(error) {
-//         next(error);
-//     }
-// }
+        urlExist(verifiedFullUrl)
+            .then((exists) => {
+                if(exists) {
+                    next();
+                } else {
+                    throw createError(400, "Url does not exist on the Web");
+                }
+            })
+            .catch((error) => {
+                next(error);
+            })
+        ;
+    } else if(verifiedUrl.protocol === 'ftp:') {
+        next();
+    } else {
+        next(createError(400, "Url Protocol not supported"));
+    }
+}
 
 // If the user does not provide the Protocol then add "https://" to make sure tha the urlExist() gets the correct type of URL
 const verifyHttpProtocol = (url) => {
@@ -49,7 +41,7 @@ const verifyHttpProtocol = (url) => {
     }
 
     verifiedUrl = urlParser.parse(verifiedUrl, true);
-    return verifiedUrl.protocol + "//" + verifiedUrl.host;
+    return verifiedUrl;
 }
 
 module.exports = validateVerifyUrl;

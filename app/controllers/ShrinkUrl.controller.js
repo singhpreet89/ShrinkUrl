@@ -162,7 +162,6 @@ module.exports = {
 
         ShrinkUrl.findByIdAndUpdate(id, updates, options).select('-__v')
             .then((result) => {
-                console.log("Result: " , result);
                 if(result === null) {
                     throw createError(404, "Url does not exist");  
                 } else {
