@@ -7,6 +7,6 @@ module.exports = {
         if (!date) {
             return "shrink-it.log";
         }
-        return date + "-shrink-it.log"
+        return (`shrink-it--${date}.log`);
     },
 }

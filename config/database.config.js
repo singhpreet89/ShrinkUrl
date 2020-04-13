@@ -9,7 +9,7 @@ module.exports = () => {
 
     let DB_URI = "mongodb://localhost:27017";
     if(process.env.DB_CONNECTION && process.env.DB_HOST && process.env.DB_PORT) {
-        DB_URI = process.env.DB_CONNECTION + "://" + process.env.DB_HOST + ":" + process.env.DB_PORT;
+        DB_URI = `${process.env.DB_CONNECTION}://${process.env.DB_HOST}:${process.env.DB_PORT}`;
     }
 
     mongoose.connect(
@@ -23,7 +23,7 @@ module.exports = () => {
             useFindAndModify: false
         }
         ).then(() => {
-            console.log('MongoDB Database: "' + process.env.DB_NAME + '" @:' + process.env.DB_CONNECTION + "://" + process.env.DB_HOST + ":" + process.env.DB_PORT);
+            console.log(`MongoDB Database: "${process.env.DB_NAME}" @:${process.env.DB_CONNECTION}://${process.env.DB_HOST}:${process.env.DB_PORT}`);
         }).catch((error) => {
             console.log("Error: " + error.message);
         })

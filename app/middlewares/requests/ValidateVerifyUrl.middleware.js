@@ -9,7 +9,7 @@ const validateVerifyUrl = (req, res, next) => {
 
     // Verify the URL when it is a http or https link
     if(verifiedUrl.protocol === 'http:' || verifiedUrl.protocol === 'https:') {
-        const verifiedFullUrl = verifiedUrl.protocol + "//" + verifiedUrl.host;
+        const verifiedFullUrl = `${verifiedUrl.protocol}//${verifiedUrl.host}`;
         
         urlExist(verifiedFullUrl)
             .then((exists) => {

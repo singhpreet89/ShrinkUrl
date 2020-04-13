@@ -94,12 +94,19 @@ module.exports = {
                 if(checkedUrl === null) {
                     const url = new ShrinkUrl({
                         url : req.body.fullUrl,
-                        short_url : process.env.APP_SHORT_URL_PREFIX + shortId.generate(),
+                        short_url : `${process.env.APP_SHORT_URL_PREFIX}/${shortId.generate()}`,
                     });
                     url.save()
                         .then((savedUrl) => {
                             if(savedUrl) {
-                                res.status(201).json({ url: savedUrl });
+                                res.set({
+                                    'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
+                                }).status(201).status(201).json({ 
+                                    status : "success",
+                                    code : 200,
+                                    message : "Short url created",
+                                    url : savedUrl, 
+                                });
                             } 
                         })
                         .catch((error) => {
@@ -129,13 +136,20 @@ module.exports = {
     //             // If the fullUrl not exist then Shrink it and SAVE
     //             const url = new ShrinkUrl({
     //                 url : req.body.fullUrl,
-    //                 short_url : process.env.APP_SHORT_URL_PREFIX + shortId.generate(),
+    //                 short_url : `${process.env.APP_SHORT_URL_PREFIX}/${shortId.generate()}`,
     //             });
             
     //             try {
-    //                 const data = await url.save();
-    //                 if(data) {
-    //                     res.status(201).json({ url: data });
+    //                 const savedUrl = await url.save();
+    //                 if(savedUrl) {
+    //                     res.set({
+    //                         'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
+    //                     }).status(201).json({ 
+    //                         status : "success",
+    //                         code : 200,
+    //                         message : "Short url created",
+    //                         url : savedUrl, 
+    //                     });
     //                 }
     //             } catch (error) {
     //                 // Triggered when the ContentType of req.body.fullUrl is NOT SUPPORTED or req.body.fullUrl is EMPTY
@@ -165,11 +179,13 @@ module.exports = {
                 if(result === null) {
                     throw createError(404, "Url does not exist");  
                 } else {
-                    res.status(200).json({ 
+                    res.set({
+                        'Location' : `${req.protocol}://${req.header('host')}/api/urls/${result._id}`
+                    }).status(200).json({ 
                         status : "success",
                         code : 200,
-                        message : "Url updated",
-                        updated_url : result, 
+                        message : "Short url updated",
+                        url : result, 
                     });
                 }
             }).catch((error) => {
@@ -193,11 +209,13 @@ module.exports = {
     //         if(result === null) {
     //             throw createError(404, "Url does not exist"); 
     //         } else {
-    //             res.status(200).json({ 
+    //             res.set({
+    //                 'Location' : `${req.protocol}://${req.header('host')}/api/urls/${result._id}`
+    //             }).status(200).json({ 
     //                 status : "success",
     //                 code : 200,
-    //                 message : "Url updated",
-    //                 updated_url : result,
+    //                 message : "Short url updated",
+    //                 url : result,
     //             });
     //         }
     //     } catch(error) {
@@ -221,8 +239,8 @@ module.exports = {
                         { 
                             status : "success",
                             code : 200,
-                            message : "Url deleted",
-                            deleted_url : result,
+                            message : "Short url deleted",
+                            url : result,
                         }
                     ); 
                 }
@@ -247,8 +265,8 @@ module.exports = {
     //             res.status(200).json({ 
     //                 status : "success",
     //                 code : 200,
-    //                 message : "Url deleted",
-    //                 deleted_url : result,
+    //                 message : "Short url deleted",
+    //                 url : result,
     //             });
     //         }
             

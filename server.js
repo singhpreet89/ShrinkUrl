@@ -26,13 +26,16 @@ app.use(express.urlencoded({extended: true}));  // This makes sure that the inco
 app.use(cors());
 
 app.use(morgan('dev'));
-app.use(morgan('common', {
-    stream: rfs.createStream(Logger.generator, {
-        interval: '1d', // rotate daily
-        path: path.join(__dirname, 'storage', 'logs'),
-      })
-}));
-  
+//TODO: Choose a better Logger instead of MORGAN
+app.use(morgan('common', 
+    {
+        stream: rfs.createStream(Logger.generator, {
+            interval: '1d', // rotate daily
+            path: path.join(__dirname, 'storage', 'logs'), 
+        })
+    }
+));
+
 // Handle the random Favicon requests triggered by the browsers
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
@@ -53,5 +56,5 @@ app.set('json spaces', 2);
 
 const PORT = process.env.APP_PORT || 3000;
 app.listen(PORT, () => {  
-    console.log('Listening requests on Port: ' + PORT);
+    console.log(`Listening requests on Port: ${PORT}`);
 });
