@@ -1,9 +1,10 @@
 module.exports = {
     handleFilters : (req) => {
-        // SANITIZE the INPUTS here, make sure that the filter is a string and escaped strings 
-        // and 
-        // At the Moment the application only supports "Clicks" as FILTER
-        // We can also add the filters for created_at and clicked_at
+        /**
+         *  TODO: SANITIZE the INPUTS here, make sure that the filter is a string and escaped strings
+         *  TODO: and At the Moment the application only supports "Clicks" as FILTER, We can also add the filters for created_at and clicked_at 
+         * */  
+        
         const filters = {};
         const clicksObject = {};
 
@@ -49,7 +50,7 @@ module.exports = {
     },
 
     handleProjections : (req) => {
-        // SANITIZE inputs here and allow commas
+        // TODO: SANITIZE inputs here and allow commas
         const projections = { __v : 0 };
         
         if(req.query.proj_ex) {
@@ -62,8 +63,7 @@ module.exports = {
     },
 
     handleOptions : (req) => {
-        // SANITIZE the INPUTS here, make sure that the skip, limit are integers / sort_by, order_by 
-        // are strings and escaped strings
+        // TODO: SANITIZE the INPUTS here, make sure that the skip, limit are integers / sort_by, order_by are strings and escaped strings
         const options = {
             skip : parseInt(req.query.skip) >= 0 ? parseInt(req.query.skip) : 0,
             limit : parseInt(req.query.limit) >= 0 ? parseInt(req.query.limit) : 0,

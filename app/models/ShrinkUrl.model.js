@@ -11,7 +11,7 @@ const shrinkUrlSchema = new Schema({
         required : true,
     },
     clicks : {
-        type : String,
+        type : Number,
         required : true,
         default : 0
     },
