@@ -15,8 +15,7 @@ const dotenv = require('dotenv').config();
 // console.log("ENVIRONMENT VARIABLES: " , dotenv.parsed);
 
 const ShrinkUrlRoutes = require('./app/routes/ShrinkUrl.route');
-const HttpExceptions = require('./app/middlewares/exceptions/Http.exceptions');
-const Logger = require('./config/logger.config');
+const HttpExceptions = require('./app/middlewares/exceptions/HttpExceptions.middleware');
 
 require('./config/database.config')();
 
@@ -29,7 +28,7 @@ app.use(morgan('dev'));
 //TODO: Choose a better Logger instead of MORGAN
 app.use(morgan('common', 
     {
-        stream: rfs.createStream(Logger.generator, {
+        stream: rfs.createStream('shrink-it.log', {
             interval: '1d', // rotate daily
             path: path.join(__dirname, 'storage', 'logs'), 
         })
@@ -56,5 +55,5 @@ app.set('json spaces', 2);
 
 const PORT = process.env.APP_PORT || 3000;
 app.listen(PORT, () => {  
-    console.log(`Listening requests on Port: ${PORT}`);
+    console.log(`INFO: Listening requests on Port: ${PORT}`);
 });

@@ -23,29 +23,29 @@ module.exports = () => {
             useFindAndModify: false
         }
         ).then(() => {
-            console.log(`MongoDB Database: "${process.env.DB_NAME}" @:${process.env.DB_CONNECTION}://${process.env.DB_HOST}:${process.env.DB_PORT}`);
+            console.log(`INFO: MongoDB Database: "${process.env.DB_NAME}" @:${process.env.DB_CONNECTION}://${process.env.DB_HOST}:${process.env.DB_PORT}`);
         }).catch((error) => {
-            console.log("Error: " + error.message);
+            console.log("ERROR: " + error.message);
         })
     ;
 
     /* Optional Events */
     mongoose.connection.on('connected', () => {
-        console.log("Mongoose connected");
+        console.log("INFO: Mongoose connected");
     });
     
-    mongoose.connection.on('error', err => {
-        console.log(err.message);
+    mongoose.connection.on('error', error => {
+        console.log("ERROR: " + error.message);
     });
     
     mongoose.connection.on('disconnected', () => {
-        console.log("Mongoose disconnected");
+        console.log("INFO: Mongoose disconnected");
     });
     
     // Fired when manually press CLTR + C
     process.on('SIGINT', () => {
         mongoose.connection.close(() => {
-          console.log("APP TERMINATED");
+          console.log("INFO: APP TERMINATED");
           process.exit(0);
         });
     });

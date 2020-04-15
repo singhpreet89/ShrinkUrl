@@ -101,9 +101,9 @@ module.exports = {
                             if(savedUrl) {
                                 res.set({
                                     'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
-                                }).status(201).status(201).json({ 
+                                }).status(201).json({ 
                                     status : "success",
-                                    code : 200,
+                                    code : 201,
                                     message : "Short url created",
                                     url : savedUrl, 
                                 });
@@ -146,7 +146,7 @@ module.exports = {
     //                         'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
     //                     }).status(201).json({ 
     //                         status : "success",
-    //                         code : 200,
+    //                         code : 201,
     //                         message : "Short url created",
     //                         url : savedUrl, 
     //                     });
