@@ -17,7 +17,10 @@ module.exports = {
         // OR
         // ShrinkUrl.find({}, '__id clicks url short_url date', options)
             .then((returnedUrls) => {
-                res.status(200).json({ urls : returnedUrls });
+                res.status(200).json({   
+                    total : returnedUrls.length,
+                    urls : returnedUrls 
+                });
             }).catch((error) => {
                 next(createError());
             })
@@ -34,7 +37,10 @@ module.exports = {
     //         const returnedUrls = await ShrinkUrl.find(filters, projections, options);
     //         // OR
     //         // ShrinkUrl.find({}, { __v : 0 }, options)
-    //         res.status(200).json({ urls : returnedUrls });
+    //         res.status(200).json({   
+    //             total : returnedUrls.length,
+    //             urls : returnedUrls 
+    //         });
     //     } catch(error) {
     //         next(createError());
     //     }
