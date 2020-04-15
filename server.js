@@ -4,24 +4,22 @@ const app = express();
 const compression = require('compression');
 const cors = require('cors');
 const morgan  = require('morgan');
-var rfs = require('rotating-file-stream');
-var favicon = require('serve-favicon');
-var path = require('path');
-
-app.use(helmet());
-app.use(compression());
+const rfs = require('rotating-file-stream');
+const favicon = require('serve-favicon');
+const path = require('path');
 
 const dotenv = require('dotenv').config();
 // console.log("ENVIRONMENT VARIABLES: " , dotenv.parsed);
 
+require('./config/database.config')();
 const ShrinkUrlRoutes = require('./app/routes/ShrinkUrl.route');
 const HttpExceptions = require('./app/middlewares/exceptions/HttpExceptions.middleware');
 
-require('./config/database.config')();
+app.use(helmet());
+app.use(compression());
 
 app.use(express.json()); 
 app.use(express.urlencoded({extended: true}));  // This makes sure that the incoming requests of ContentType, application/x-www-form-urlencoded to work like application/json    
-
 app.use(cors());
 
 app.use(morgan('dev'));
