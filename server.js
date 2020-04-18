@@ -12,7 +12,7 @@ const dotenv = require('dotenv').config();
 // console.log("ENVIRONMENT VARIABLES: " , dotenv.parsed);
 
 require('./config/database.config')();
-const ShrinkUrlRoutes = require('./app/routes/ShrinkUrl.route');
+const ShrinkUrlRoutes = require('./app/routes/ShrinkUrl.routes');
 const HttpExceptions = require('./app/middlewares/exceptions/HttpExceptions.middleware');
 
 app.use(helmet());
