@@ -1,0 +1,150 @@
+# ShrinkIt REST CLIENT
+
+@port = 5000
+@baseUrl = http://localhost:{{port}}
+@url = {{baseUrl}}/api/urls
+@contentTypeJson = application/json
+@contentTypeUrlEncoded= = application/x-www-form-urlencoded
+
+
+### (GET) all Url's ######################################################################
+GET {{url}}
+
+
+### (GET) all Url's with Query Parameters ######################################################################
+### FILTERS
+### 1. ###
+GET {{url}}?filter=clicks&gte=3&lte=9
+### 2. ###
+GET {{url}}?filter=clicks&gte=3&lt=9
+### 3. ###
+GET {{url}}?filter=clicks&gt=3&lte=9
+### 4. ###
+GET {{url}}?filter=clicks&gt=3&lt=9
+### 5. ###
+GET {{url}}?filter=clicks&gte=3
+### 6. ###
+GET {{url}}?filter=clicks&lte=3
+### 7. ###
+GET {{url}}?filter=clicks&gt=3
+### 8. ###
+GET {{url}}?filter=clicks&lt=3
+### 9. ###
+GET {{url}}?filter=clicks&ne=3
+### 10. ###
+GET {{url}}?filter=clicks&eq=3
+
+
+### PROJECTIONS
+### 1. ###
+GET {{url}}?proj_ex=__v
+### 2. ###
+GET {{url}}?proj_ex=__v,_id
+### 3. ###
+GET {{url}}?proj_ex=__v,_id,clicks
+### 4. ###
+GET {{url}}?proj_ex=__v,_id,clicks,url
+### 5. ###
+GET {{url}}?proj_ex=__v,_id,clicks,url,short_url
+### 6. ###
+GET {{url}}?proj_ex=__v,_id,clicks,url,short_url,created_at
+### 7. ###
+GET {{url}}?proj_ex=__v,_id,clicks,url,short_url,created_at,clicked_at
+
+
+### OPTIONS
+### 1. ###
+GET {{url}}?skip=2
+### 2. ###
+GET {{url}}?limit=3
+### 3. ### Limit should always passed after Skip if they are to be used togather
+GET {{url}}?skip=2&limit=3
+### 4. ###
+GET {{url}}?limit=0&sort_by=url
+### 5. ###
+GET {{url}}?limit=0&sort_by=clicks&order_by=desc
+### 6. ###
+GET {{url}}?limit=0&sort_by=url&order_by=desc
+### 7. ### Opposite to the Normal GET Request
+GET {{url}}?limit=0&sort_by=created_at&order_by=desc
+### 8. ###
+GET {{url}}?limit=0&sort_by=url&order_by=asc
+### 9. ###
+GET {{url}}?limit=0&skip=1&sort_by=url&order_by=desc
+
+### COMBINATIONS ###
+### 1. ###
+GET {{url}}?filter=clicks&gte=3&lte=9&sort_by=clicks&order_by=desc
+
+
+### (GET) a Url by using "_id" ##################################################
+GET {{url}}/5e9149266a89b96e9858c287  	
+
+
+### (POST) a Url #########################################################################
+POST {{url}}
+content-type: {{contentTypeJson}}
+
+{
+	"fullUrl" : "http://www.iitd.ac.in"
+}
+
+
+### (POST with URL Encoded Parameters) a Url #########################################################################
+POST {{url}}
+content-type: application/x-www-form-urlencoded
+
+fullUrl=https://www.yahoo.in
+
+
+### (PATCH) a Url by using id ############################################################
+PATCH {{url}}/update/5e93d628340ad661f817e65a
+content-type: {{contentTypeJson}}
+
+{
+	"fullUrl" : "http://www.iitd.ac.in"
+}
+
+
+### (PATCH) a Url with FTP protocol by using id ############################################################
+PATCH {{url}}/update/5e9504da56b3941b3c318124
+content-type: {{contentTypeJson}}
+
+{
+	"fullUrl" : "http://digit.in"
+}
+
+
+### (DELETE) a Url by using id  ##########################################################
+DELETE {{url}}/delete/5e95467febd3225ef05f1088
+
+### (DELETE) the entire collection  ##########################################################
+DELETE {{url}}/delete
+
+
+
+
+
+
+
+
+
+### TESTING with Wrong routes
+########################################################################## TEST ERRORS ########################################################################## 
+### (GET) Wong route ######################################################################
+GET {{baseUrl}}
+
+
+### (GET) Wrong Sub route #################################################################
+GET {{url}}/failedUrl
+
+### (POST with wrong body parameter) a Url #########################################################################
+POST {{url}}
+content-type: {{contentTypeJson}}
+
+{
+	"fullUrllllllllll" : "something.com"
+}
+
+###
+DELETE {{url}}
