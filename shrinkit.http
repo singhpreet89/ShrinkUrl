@@ -94,15 +94,15 @@ content-type: {{contentTypeJson}}
 POST {{url}}
 content-type: application/x-www-form-urlencoded
 
-fullUrl=https://www.yahoo.in
+fullUrl=http://www.iitrpr.ac.in
 
 
 ### (PATCH) a Url by using id ############################################################
-PATCH {{url}}/update/5e93d628340ad661f817e65a
+PATCH {{url}}/update/5e9a9278eda7471da84dbfab
 content-type: {{contentTypeJson}}
 
 {
-	"fullUrl" : "http://www.iitd.ac.in"
+	"fullUrl" : "http://iitd.ac.in"
 }
 
 

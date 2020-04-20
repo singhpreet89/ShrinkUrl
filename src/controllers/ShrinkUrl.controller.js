@@ -93,32 +93,109 @@ module.exports = {
 
 /***************************************** (POST) a Url *****************************************/
     /* Promise */
-    postUrl : (req, res, next) => {
+    // postUrl : (req, res, next) => {
+    //     // Checking whether the same URL already exists in the database
+    //     ShrinkUrl.findOne({ url : req.body.fullUrl })
+    //         .then((checkedUrl) => {
+    //             if(checkedUrl === null) {
+    //                 const url = new ShrinkUrl({
+    //                     url : req.body.fullUrl,
+    //                     short_url : `${process.env.APP_SHORT_URL_PREFIX}/${shortId.generate()}`,
+    //                 });
+    //                 url.save()
+    //                     .then((savedUrl) => {
+    //                         if(savedUrl) {
+    //                             res.set({
+    //                                 'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
+    //                             }).status(201).json({ 
+    //                                 status : "success",
+    //                                 code : 201,
+    //                                 message : "Short url created",
+    //                                 url : savedUrl, 
+    //                             });
+    //                         } 
+    //                     })
+    //                     .catch((error) => {
+    //                         // Triggered when the ContentType of req.body.fullUrl is NOT SUPPORTED or req.body.fullUrl is EMPTY
+    //                         if(error.name === "ValidationError") {
+    //                             next(createError(422, error.message));
+    //                             return;
+    //                         }
+    //                         next(error);
+    //                     })
+    //                 ;
+    //             } else {
+    //                 throw createError(409, req.body.fullUrl + " already exist as Short Url: " + checkedUrl.short_url);
+    //             }
+    //         }).catch((error) => {
+    //             next(error);
+    //         })
+    //     ;
+    // },
+
+    /* ASYNC / AWAIT */
+    postUrl : async (req, res, next) => {
         // Checking whether the same URL already exists in the database
+        try {
+            const checkedUrl = await ShrinkUrl.findOne({ url : req.body.fullUrl });
+            if(checkedUrl === null) {
+                // If the fullUrl not exist then Shrink it and SAVE
+                const url = new ShrinkUrl({
+                    url : req.body.fullUrl,
+                    short_url : `${process.env.APP_SHORT_URL_PREFIX}/${shortId.generate()}`,
+                });
+            
+                const savedUrl = await url.save();
+                if(savedUrl) {
+                    res.set({
+                        'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
+                    }).status(201).json({ 
+                        status : "success",
+                        code : 201,
+                        message : "Short url created",
+                        url : savedUrl, 
+                    });
+                }
+            } else {
+                throw createError(409, req.body.fullUrl + " already exist as Short Url: " + checkedUrl.short_url);
+            }
+        } catch(error) {
+            // Triggered when the ContentType of req.body.fullUrl is NOT SUPPORTED or req.body.fullUrl is EMPTY
+            if(error.name === "ValidationError") {
+                next(createError(422, error.message));
+                return;
+            }
+            next(error);
+        } 
+    },
+
+/***************************************** (PATCH) a Url by using id *****************************************/
+    /* Promise */
+    updateUrl : (req, res, next) => {
         ShrinkUrl.findOne({ url : req.body.fullUrl })
             .then((checkedUrl) => {
                 if(checkedUrl === null) {
-                    const url = new ShrinkUrl({
-                        url : req.body.fullUrl,
-                        short_url : `${process.env.APP_SHORT_URL_PREFIX}/${shortId.generate()}`,
-                    });
-                    url.save()
-                        .then((savedUrl) => {
-                            if(savedUrl) {
+                    const id = req.params.urlId;
+                    const updates = { url : req.body.fullUrl };
+                    const options = { new : true };
+
+                    ShrinkUrl.findByIdAndUpdate(id, updates, options).select('-__v')
+                        .then((result) => {
+                            if(result === null) {
+                                throw createError(404, "Url does not exist");  
+                            } else {
                                 res.set({
-                                    'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
-                                }).status(201).json({ 
+                                    'Location' : `${req.protocol}://${req.header('host')}/api/urls/${result._id}`
+                                }).status(200).json({ 
                                     status : "success",
-                                    code : 201,
-                                    message : "Short url created",
-                                    url : savedUrl, 
+                                    code : 200,
+                                    message : "Short url updated",
+                                    url : result, 
                                 });
-                            } 
-                        })
-                        .catch((error) => {
-                            // Triggered when the ContentType of req.body.fullUrl is NOT SUPPORTED or req.body.fullUrl is EMPTY
-                            if(error.name === "ValidationError") {
-                                next(createError(422, error.message));
+                            }
+                        }).catch((error) => {
+                            if(error instanceof mongoose.CastError) {
+                                next(createError(400, "Invalid Url id"));
                                 return;
                             }
                             next(error);
@@ -134,95 +211,29 @@ module.exports = {
     },
 
     /* ASYNC / AWAIT */
-    // postUrl : async (req, res, next) => {
-    //     // Checking whether the same URL already exists in the database
+    // updateUrl : async (req, res, next) => {
     //     try {
     //         const checkedUrl = await ShrinkUrl.findOne({ url : req.body.fullUrl });
     //         if(checkedUrl === null) {
-    //             // If the fullUrl not exist then Shrink it and SAVE
-    //             const url = new ShrinkUrl({
-    //                 url : req.body.fullUrl,
-    //                 short_url : `${process.env.APP_SHORT_URL_PREFIX}/${shortId.generate()}`,
-    //             });
-            
-    //             try {
-    //                 const savedUrl = await url.save();
-    //                 if(savedUrl) {
-    //                     res.set({
-    //                         'Location' : `${req.protocol}://${req.header('host')}/api/urls/${savedUrl._id}`
-    //                     }).status(201).json({ 
-    //                         status : "success",
-    //                         code : 201,
-    //                         message : "Short url created",
-    //                         url : savedUrl, 
-    //                     });
-    //                 }
-    //             } catch (error) {
-    //                 // Triggered when the ContentType of req.body.fullUrl is NOT SUPPORTED or req.body.fullUrl is EMPTY
-    //                 if(error.name === "ValidationError") {
-    //                     next(createError(422, error.message));
-    //                     return;
-    //                 }
-    //                 next(error);
+    //             const id = req.params.urlId;
+    //             const updates = { url : req.body.fullUrl };
+    //             const options = { new : true };
+                
+    //             const result = await ShrinkUrl.findByIdAndUpdate(id, updates, options).select('-__v');
+    //             if(result === null) {
+    //                 throw createError(404, "Url does not exist"); 
+    //             } else {
+    //                 res.set({
+    //                     'Location' : `${req.protocol}://${req.header('host')}/api/urls/${result._id}`
+    //                 }).status(200).json({ 
+    //                     status : "success",
+    //                     code : 200,
+    //                     message : "Short url updated",
+    //                     url : result,
+    //                 });
     //             }
     //         } else {
     //             throw createError(409, req.body.fullUrl + " already exist as Short Url: " + checkedUrl.short_url);
-    //         }
-    //     } catch(error) {
-    //         next(error);
-    //     } 
-    // },
-
-/***************************************** (PATCH) a Url by using id *****************************************/
-    /* Promise */
-    updateUrl : (req, res, next) => {
-        const id = req.params.urlId;
-        const updates = { url : req.body.fullUrl };
-        const options = { new : true };
-
-        ShrinkUrl.findByIdAndUpdate(id, updates, options).select('-__v')
-            .then((result) => {
-                if(result === null) {
-                    throw createError(404, "Url does not exist");  
-                } else {
-                    res.set({
-                        'Location' : `${req.protocol}://${req.header('host')}/api/urls/${result._id}`
-                    }).status(200).json({ 
-                        status : "success",
-                        code : 200,
-                        message : "Short url updated",
-                        url : result, 
-                    });
-                }
-            }).catch((error) => {
-                if(error instanceof mongoose.CastError) {
-                    next(createError(400, "Invalid Url id"));
-                    return;
-                }
-                next(error);
-            })
-        ;
-    },
-
-    /* ASYNC / AWAIT */
-    // updateUrl : async (req, res, next) => {
-    //     try {
-    //         const id = req.params.urlId;
-    //         const updates = { url : req.body.fullUrl };
-    //         const options = { new : true };
-            
-    //         const result = await ShrinkUrl.findByIdAndUpdate(id, updates, options).select('-__v');
-    //         if(result === null) {
-    //             throw createError(404, "Url does not exist"); 
-    //         } else {
-    //             res.set({
-    //                 'Location' : `${req.protocol}://${req.header('host')}/api/urls/${result._id}`
-    //             }).status(200).json({ 
-    //                 status : "success",
-    //                 code : 200,
-    //                 message : "Short url updated",
-    //                 url : result,
-    //             });
     //         }
     //     } catch(error) {
     //         if(error instanceof mongoose.CastError) {
