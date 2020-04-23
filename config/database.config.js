@@ -23,30 +23,30 @@ module.exports = () => {
             useFindAndModify: false
         }
         ).then(() => {
-            console.log(`INFO: MongoDB Database: "${process.env.DB_NAME}" @:${process.env.DB_CONNECTION}://${process.env.DB_HOST}:${process.env.DB_PORT}`);
+            console.log(`INFO ==> Process: ${process.pid}, MongoDB Database: "${process.env.DB_NAME}" @:${process.env.DB_CONNECTION}://${process.env.DB_HOST}:${process.env.DB_PORT}`);
         }).catch((error) => {
-            console.log("ERROR: " + error.message);
+            console.log(`ERROR ==> Process: ${process.pid}, ${error.message}`);
         })
     ;
 
     /* Optional Events */
-    mongoose.connection.on('connected', () => {
-        console.log("INFO: Mongoose connected");
-    });
+    // mongoose.connection.on('connected', () => {
+    //     console.log(`INFO ==> Process: ${process.pid}, Mongoose connected`);
+    // });
     
     mongoose.connection.on('error', error => {
-        console.log("ERROR: " + error.message);
+        console.log(`ERROR ==> Process: ${process.pid}, ${error.message}`);
     });
     
-    mongoose.connection.on('disconnected', () => {
-        console.log("INFO: Mongoose disconnected");
-    });
+    // mongoose.connection.on('disconnected', () => {
+    //     console.log(`INFO ==> Process: ${process.pid}, Mongoose disconnected`);
+    // });
     
     // Fired when manually press CLTR + C
-    process.on('SIGINT', () => {
-        mongoose.connection.close(() => {
-          console.log("INFO: APP TERMINATED");
-          process.exit(0);
-        });
-    });
+    // process.on('SIGINT', () => {
+    //     mongoose.connection.close(() => {
+    //         console.log('INFO ==> APP TERMINATED');
+    //       process.exit(0);
+    //     });
+    // });
 };

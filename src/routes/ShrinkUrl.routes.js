@@ -7,7 +7,7 @@ const ValidateVerifyUrl = require('../middlewares/requests/ValidateVerifyUrl.mid
 router.get("/", ShrinkUrlController.getAllUrls);
 router.get('/:urlId', ShrinkUrlController.getSingleUrl);
 
-router.post("/", ValidateVerifyUrl, [body('fullUrl').trim()], ShrinkUrlController.postUrl);
+router.post("/", [body('fullUrl').trim()], ValidateVerifyUrl, ShrinkUrlController.postUrl);
 
 router.patch('/update/:urlId', [body('fullUrl').trim()], ValidateVerifyUrl, ShrinkUrlController.updateUrl);
 

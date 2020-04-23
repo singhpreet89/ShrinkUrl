@@ -30,7 +30,7 @@ const validateVerifyUrl = (req, res, next) => {
     }
 }
 
-// If the user does not provide the Protocol then add "https://" to make sure tha the urlExist() gets the correct type of URL
+// If the user does not provide any Protocol then add "http://" to make sure tha the urlExist() gets the correct type of URL
 const verifyHttpProtocol = (url) => {
     let verifiedUrl = null;
     

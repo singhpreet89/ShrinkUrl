@@ -53,5 +53,5 @@ app.set('json spaces', 2);
 
 const PORT = process.env.APP_PORT || 3000;
 app.listen(PORT, () => {  
-    console.log(`INFO: Listening requests on Port: ${PORT}`);
+    console.info(`INFO ==> Process: ${process.pid}, listening on Port: ${PORT}`);
 });
