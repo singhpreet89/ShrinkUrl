@@ -24,7 +24,7 @@ app.use(cors());
 
 app.use(morgan('dev'));
 //TODO: Choose a better Logger instead of MORGAN
-app.use(morgan('common', 
+app.use(morgan('combined', 
     {
         stream: rfs.createStream('shrink-it.log', {
             interval: '1d', // rotate daily
