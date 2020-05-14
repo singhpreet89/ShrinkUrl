@@ -1,0 +1,1886 @@
+{
+	"info": {
+		"_postman_id": "38b0c60a-d15b-450b-bc92-5400935691c8",
+		"name": "API Endpoints",
+		"description": "Check all the API endpoints that have been created for ShrinkIt.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST & GET -- Create and Verify Url's",
+			"item": [
+				{
+					"name": "POST",
+					"item": [
+						{
+							"name": "1. Post (JSON) - http://iitd.ac.in",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "81d7095b-f96e-4158-b757-659eea980e81",
+										"exec": [
+											"pm.variables.set(\"iitDelhi\", \"http://www.iitd.ac.in\");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "a3ed222d-2cc7-4a69-8496-aea59f7d5776",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Check data\", function() {",
+											"    pm.expect(response.url.url).to.equal(pm.variables.get('iitDelhi'));",
+											"    ",
+											"    // pm.environment.set('iitDelhiId', response.url._id);              // To be used in the PATCH & DELETE Request for iitDelhi",
+											"    pm.environment.set(`ID--${response.url.url}`, response.url._id);    // To be used in the PATCH & DELETE Request for iitDelhi",
+											"});",
+											"",
+											"pm.variables.unset('iitDelhi'); // Unset because no longer required",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"fullUrl\" : \"{{iitDelhi}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}",
+									"host": [
+										"{{url}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Post (X-www-form-urlencoded) - http://www.iitrpr.ac.in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "eaaa6992-9601-4353-824c-69f7a8a1669f",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Check data\", function() {",
+											"    pm.expect(response.url.url).to.equal(pm.variables.get('iitRopar'));",
+											"    ",
+											"    // pm.environment.set('iitRoparId', response.url._id);              // To be used in the PATCH & DELETE Request for iitRopar",
+											"    pm.environment.set(`ID--${response.url.url}`, response.url._id);    // To be used in the PATCH & DELETE Request for iitRopar",
+											"});",
+											"",
+											"pm.variables.unset('iitRopar'); // Unset because no longer required",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8925f2e1-0f9f-4cc0-aa11-271779574e31",
+										"exec": [
+											"pm.variables.set(\"iitRopar\", \"http://www.iitrpr.ac.in\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "fullUrl",
+											"value": "{{iitRopar}}",
+											"type": "text"
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}",
+									"host": [
+										"{{url}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Post with Pre-request script",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "afb40797-45af-4ae7-a76b-043f84c01cfd",
+										"exec": [
+											"let urls = pm.environment.get('urls');",
+											"",
+											"if(!urls) {",
+											"    urls = [",
+											"        \"https://www.google.com\",",
+											"        \"http://www.gmail.com\",",
+											"        \"https://www.yahoo.com\",",
+											"        \"https://www.yahoo.in\",",
+											"        \"http://www.samsung.com\",",
+											"        \"http://www.digit.in\",",
+											"        \"http://www.nitj.ac.in\",",
+											"    ];",
+											"}",
+											"",
+											"let fullUrl = urls.shift();",
+											"pm.environment.set(\"urlToPost\", fullUrl);",
+											"",
+											"pm.environment.set(\"urls\", urls);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "e7d7f487-d87a-4e19-beba-c8b9cd356111",
+										"exec": [
+											"let urls = pm.environment.get('urls');",
+											"",
+											"if(urls && urls.length > 0) {",
+											"    postman.setNextRequest(\"3. Post with Pre-request script\");",
+											"",
+											"    // Run test cases for n - 1 Url's defined in the Pre-request Script",
+											"    runTestCases();",
+											"} ",
+											"",
+											"else {",
+											"    // Run test cases for the last Url defined in the Pre-request Script",
+											"    runTestCases();",
+											"    ",
+											"    pm.environment.unset('urlToPost');",
+											"    pm.environment.unset('urls');",
+											"    // postman.setNextRequest('2. Post (JSON) - http://iitd.ac.in');",
+											"    postman.setNextRequest(null);",
+											"}",
+											"",
+											"",
+											"function runTestCases() {",
+											"    /* Test cases for each URL created */",
+											"    const response = pm.response.json();",
+											"",
+											"    pm.test(\"Verify status code\", function() {",
+											"        pm.response.to.have.status(201);",
+											"    });",
+											"    ",
+											"    pm.test(\"Check data\", function() {",
+											"        pm.expect(response.url.url).to.equal(pm.environment.get(\"urlToPost\"));",
+											"        ",
+											"        pm.environment.set(`ID--${response.url.url}`, response.url._id);    // To be used in the PATCH & DELETE Request for the corresponding URL's",
+											"    });",
+											"    /* */",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"fullUrl\" : \"{{urlToPost}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}",
+									"host": [
+										"{{url}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0c6f3ad2-b655-4d50-838f-01fd165196f5",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "015facbe-e9e6-4a97-b1ec-f359158fb44b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "GET",
+					"item": [
+						{
+							"name": "1. Get - http://www.iitdelhi.ac.in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--http://www.iitd.ac.in'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "1651adb7-976e-4c4e-863a-add6292fb566",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--http://www.iitd.ac.in}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--http://www.iitd.ac.in}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Get - http://www.iitrpr.ac.in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3698855d-82bd-448f-959f-ea9dc957cf8f",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--http://www.iitrpr.ac.in'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--http://www.iitrpr.ac.in}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--http://www.iitrpr.ac.in}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Get - https://www.google.com",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--https://www.google.com'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--https://www.google.com}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--https://www.google.com}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Get - http://www.gmail.com",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--http://www.gmail.com'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--http://www.gmail.com}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--http://www.gmail.com}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Get - https://www.yahoo.com",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--https://www.yahoo.com'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--https://www.yahoo.com}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--https://www.yahoo.com}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Get - https://www.yahoo.in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--https://www.yahoo.in'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--https://www.yahoo.in}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--https://www.yahoo.in}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. Get - http://www.samsung.com",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--http://www.samsung.com'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--http://www.samsung.com}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--http://www.samsung.com}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. Get - http://www.digit.in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--http://www.digit.in'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--http://www.digit.in}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--http://www.digit.in}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "9. Get - http://www.nitj.ac.in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0159b8ad-ed19-4c8e-a1a7-3336ab4c87d0",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check id\", function() {",
+											"    pm.expect(response.url._id).to.equal(pm.environment.get('ID--http://www.nitj.ac.in'));",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/{{ID--http://www.nitj.ac.in}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{ID--http://www.nitj.ac.in}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "10. Get all Urls",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5eafe177-bb01-407d-b4a1-53c308b3e127",
+										"exec": [
+											"const response = pm.response.json();",
+											"",
+											"pm.test(\"Verify status code\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Check returned array\", function() {",
+											"    pm.expect(response.urls).to.be.an('array');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}",
+									"host": [
+										"{{url}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "68ae554d-b4d6-4327-8241-64d85b08ac11",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set('N_GET--http://www.iitd.ac.in', 5);",
+									"pm.environment.set('N_GET--http://www.iitrpr.ac.in', 0);",
+									"pm.environment.set('N_GET--https://www.google.com', 3);",
+									"pm.environment.set('N_GET--http://www.gmail.com', 2);",
+									"pm.environment.set('N_GET--https://www.yahoo.com', 34);",
+									"pm.environment.set('N_GET--https://www.yahoo.in', 9);",
+									"pm.environment.set('N_GET--http://www.samsung.com', 7);",
+									"pm.environment.set('N_GET--http://www.digit.in', 0);",
+									"pm.environment.set('N_GET--http://www.nitj.ac.in', 12);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "7c86d247-7943-41b0-88ec-89b575a712e8",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "101314f9-5146-4850-ad91-f4c0c9865506",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "75a0d9e0-f663-459e-b0da-80afa01e2219",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "GET -- Verify Url's with Query Parameters",
+			"item": [
+				{
+					"name": "FILTER ---> clicks",
+					"item": [
+						{
+							"name": "1. gte",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&gte=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "gte",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. gt",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&gt=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "gt",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. lte",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&lte=9",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "lte",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. lt",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&lt=9",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "lt",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. ne",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&ne=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "ne",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. eq",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&eq=3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "eq",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. gte & lte",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&gte=3&lte=9",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "gte",
+											"value": "3"
+										},
+										{
+											"key": "lte",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. gte & lt",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&gte=3&lt=9",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "gte",
+											"value": "3"
+										},
+										{
+											"key": "lt",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "9. gt & lte",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&gt=3&lte=9",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "gt",
+											"value": "3"
+										},
+										{
+											"key": "lte",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "10. gt & lt",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/?filter=clicks&gt=3&lt=9",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "gt",
+											"value": "3"
+										},
+										{
+											"key": "lt",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Query parameters - FILTERS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0284e85f-e314-404e-9ec8-fe6549ecacd2",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "edc932fe-dcdc-4aab-909e-b7df35bbfaf0",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "PROJECTIONS ---> proj_ex",
+					"item": [
+						{
+							"name": "1. __v",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?proj_ex=__v",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "proj_ex",
+											"value": "__v"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. __v, _id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?proj_ex=__v,_id",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "proj_ex",
+											"value": "__v,_id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. __v, _id, clicks",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?proj_ex=__v,_id,clicks",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "proj_ex",
+											"value": "__v,_id,clicks"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. __v, _id, clicks, url",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?proj_ex=__v,_id,clicks,url",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "proj_ex",
+											"value": "__v,_id,clicks,url"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. __v, _id, clicks, url, short_url",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?proj_ex=__v,_id,clicks,url,short_url",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "proj_ex",
+											"value": "__v,_id,clicks,url,short_url"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. __v, _id, clicks, url, short_url, created_at",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?proj_ex=__v,_id,clicks,url,short_url,created_at",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "proj_ex",
+											"value": "__v,_id,clicks,url,short_url,created_at"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. __v, _id, clicks, url, short_url, created_at, clicked_at",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?proj_ex=__v,_id,clicks,url,short_url,created_at,clicked_at",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "proj_ex",
+											"value": "__v,_id,clicks,url,short_url,created_at,clicked_at"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Query parameters - PROJECTIONS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8910c585-a197-4363-89ef-c53255d6eba5",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "fc80e018-a7f0-4213-8f9f-950fcac97819",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "OPTIONS ---> limit, skip, sort_by, order_by",
+					"item": [
+						{
+							"name": "1. skip",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?skip=2",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "skip",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. limit",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?limit=3",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. skip & limit",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?skip=2&limit=3",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "skip",
+											"value": "2"
+										},
+										{
+											"key": "limit",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. limit & sort_by",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?limit=0&sort_by=url",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "0"
+										},
+										{
+											"key": "sort_by",
+											"value": "url"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. limit & sort_by & order_by",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?limit=0&sort_by=clicks&order_by=desc",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "0"
+										},
+										{
+											"key": "sort_by",
+											"value": "clicks"
+										},
+										{
+											"key": "order_by",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. limit & sort_by & order_by - 2",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?limit=0&sort_by=url&order_by=desc",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "0"
+										},
+										{
+											"key": "sort_by",
+											"value": "url"
+										},
+										{
+											"key": "order_by",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. limit & sort_by & order_by - 3",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?limit=0&sort_by=created_at&order_by=desc",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "0"
+										},
+										{
+											"key": "sort_by",
+											"value": "created_at"
+										},
+										{
+											"key": "order_by",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. limit & sort_by & order_by - 4",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?limit=0&sort_by=url&order_by=asc",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "0"
+										},
+										{
+											"key": "sort_by",
+											"value": "url"
+										},
+										{
+											"key": "order_by",
+											"value": "asc"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "9. limit & sort_by & order_by - 5",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?limit=0&skip=1&sort_by=url&order_by=desc",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "0"
+										},
+										{
+											"key": "skip",
+											"value": "1"
+										},
+										{
+											"key": "sort_by",
+											"value": "url"
+										},
+										{
+											"key": "order_by",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Query parameters - OPTIONS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ada1c5e3-9d0e-4a9f-851b-881e61f7d0a3",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "4a913044-de3d-48c8-be1e-8be313b46366",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "COMBINATIONS",
+					"item": [
+						{
+							"name": "1. Filters - Projections - Options",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}?filter=clicks&gte=3&lte=9&sort_by=clicks&order_by=desc",
+									"host": [
+										"{{url}}"
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "clicks"
+										},
+										{
+											"key": "gte",
+											"value": "3"
+										},
+										{
+											"key": "lte",
+											"value": "9"
+										},
+										{
+											"key": "sort_by",
+											"value": "clicks"
+										},
+										{
+											"key": "order_by",
+											"value": "desc"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "PATCH -- Update the Url's",
+			"item": [
+				{
+					"name": "1. Patch - http://www.iitd.ac.in - to-  iitd.ac.in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7aad54d5-6f67-43d6-a211-8b8c3e641327",
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Verify status code\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check data\", function() {",
+									"    pm.expect(response.message).to.equal('Short url updated');",
+									"    pm.expect(response.url.url).to.equal(pm.variables.get('iitDelhi'));",
+									"});",
+									"",
+									"pm.variables.unset('iitDelhi');",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6753924e-21b9-4c3e-b75f-5bc568020178",
+								"exec": [
+									"pm.variables.set(\"iitDelhi\", \"iitd.ac.in\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"fullUrl\" : \"{{iitDelhi}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/update/{{ID--http://www.iitd.ac.in}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update",
+								"{{ID--http://www.iitd.ac.in}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Patch - http://www.iitrpr.ac.in - to-  iitrpr.ac.in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "245d5a45-bf35-466e-af87-b4261ea27f8e",
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Verify status code\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check data\", function() {",
+									"    pm.expect(response.message).to.equal('Short url updated');",
+									"    pm.expect(response.url.url).to.equal(pm.variables.get('iitRopar'));",
+									"});",
+									"",
+									"pm.variables.unset('iitRopar');",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e8c749ec-8433-4ac7-9954-9f6ac34df759",
+								"exec": [
+									"pm.variables.set(\"iitRopar\", \"iitrpr.ac.in\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"fullUrl\" : \"{{iitRopar}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/update/{{ID--http://www.iitrpr.ac.in}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"update",
+								"{{ID--http://www.iitrpr.ac.in}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "DELETE -- Remove the Url's",
+			"item": [
+				{
+					"name": "1. Delete - http://www.iitdelhi.ac.in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1d4807a3-31bd-47d7-bfd2-b0db2e0f7fa2",
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Verify status code\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check data\", function() {",
+									"    pm.expect(response.message).to.equal('Short url deleted');",
+									"    ",
+									"    pm.environment.unset('ID--http://www.iitd.ac.in');     // Unsetting the iitDelhiId Environment Variable",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/delete/{{ID--http://www.iitd.ac.in}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete",
+								"{{ID--http://www.iitd.ac.in}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Delete - http://www.iitrpr.ac.in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1d4807a3-31bd-47d7-bfd2-b0db2e0f7fa2",
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Verify status code\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check data\", function() {",
+									"    pm.expect(response.message).to.equal('Short url deleted');",
+									"    ",
+									"    pm.environment.unset('ID--http://www.iitrpr.ac.in');     // Unsetting the iitRoparId Environment Variable",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/delete/{{ID--http://www.iitrpr.ac.in}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete",
+								"{{ID--http://www.iitrpr.ac.in}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Delete - All Url's",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "05b736c3-c136-4beb-998b-68f33a4843f9",
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"pm.test(\"Verify status code\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check data\", function() {",
+									"    pm.expect(response.status).to.equal('success');",
+									"    pm.expect(response.message).to.equal('Collection deleted');",
+									"    ",
+									"    cleanup();  // Deleting all the environment variables",
+									"});",
+									"",
+									"",
+									"function cleanup() {",
+									"    const cleanEnvironment = _.keys(pm.environment.toObject());",
+									"    ",
+									"    _.each(cleanEnvironment, (arrItem) => {",
+									"        pm.environment.unset(arrItem);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/delete",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Testing -- For Errors",
+			"item": [
+				{
+					"name": "1. Wrong Url",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Wrong Url - 2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/failedUrl",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"failedUrl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Wrong Body Parameter name",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"fullUrllllllllll\" : \"something.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Wrong Body Parameter name Copy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"fullUrllllllllll\" : \"something.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}",
+							"host": [
+								"{{url}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Test wrong Url's and Non-existant routes.",
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "d5778acc-b8e4-4147-b6c3-9913afaef0ac",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "315dba9c-fe79-4886-a169-9387ea88da3f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "252e6015-904f-4771-a765-6e1aa57d6c19",
+			"key": "url",
+			"value": "http://localhost:5000/api/urls",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

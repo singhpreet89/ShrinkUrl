@@ -111,21 +111,15 @@ PATCH {{url}}/update/5e9504da56b3941b3c318124
 content-type: {{contentTypeJson}}
 
 {
-	"fullUrl" : "http://digit.in"
+	"fullUrl" : "ftp://digit.in"
 }
 
 
 ### (DELETE) a Url by using id  ##########################################################
 DELETE {{url}}/delete/5e95467febd3225ef05f1088
 
-### (DELETE) the entire collection  ##########################################################
+### (DELETE) an entire collection  ##########################################################
 DELETE {{url}}/delete
-
-
-
-
-
-
 
 
 
